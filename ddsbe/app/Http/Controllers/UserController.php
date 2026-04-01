@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserJob;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Traits\ApiResponser;
@@ -37,14 +38,18 @@ class UserController extends Controller
      */
     public function add(Request $request)
     {
-        $rules = [
+        $rules = 
+        [
             'username' => 'required|max:20',
             'password' => 'required|max:20',
             'gender'   => 'required|in:Male,Female',
+            'jobid' => 'required|numeric|min:1|not_in:0'
         ];
 
         $this->validate($request, $rules);
-        
+         // validate if Jobid is found in the table 'userjob'
+        //$userjob = UserJob::findOrFail($request->jobid);
+    
         $user = User::create($request->all());
         
         return $this->successResponse($user, Response::HTTP_CREATED);
@@ -68,13 +73,16 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $rules = [
+        $rules = 
+        [
             'username' => 'max:20',
             'password' => 'max:20',
             'gender'   => 'in:Male,Female',
+            'jobid' => 'required|numeric|min:1|not_in:0'
         ];
 
         $this->validate($request, $rules);
+        //$userjob = UserJob::findOrFail($request->jobid);
 
         $user = User::findOrFail($id);
         $user->fill($request->all());
